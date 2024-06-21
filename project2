@@ -1,0 +1,118 @@
+class Node:
+    def __init__(self, coeff, exp):
+        self.coefficient = coeff
+        self.exponent = exp
+        self.next = None
+
+class Polynomial:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, coeff, exp):
+        new_node = Node(coeff, exp)
+        if self.head is None:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    def display(self):
+        current = self.head
+        while current:
+            print(f"{current.coefficient}x^{current.exponent}", end=" ")
+            if current.next:
+                print("+", end=" ")
+            current = current.next
+        print()
+
+    def add(self, other):
+        result = Polynomial()
+        current_self = self.head
+        current_other = other.head
+
+        while current_self and current_other:
+            if current_self.exponent > current_other.exponent:
+                result.insert(current_self.coefficient, current_self.exponent)
+                current_self = current_self.next
+            elif current_self.exponent < current_other.exponent:
+                result.insert(current_other.coefficient, current_other.exponent)
+                current_other = current_other.next
+            else:
+                result.insert(current_self.coefficient + current_other.coefficient, current_self.exponent)
+                current_self = current_self.next
+                current_other = current_other.next
+
+        while current_self:
+            result.insert(current_self.coefficient, current_self.exponent)
+            current_self = current_self.next
+
+        while current_other:
+            result.insert(current_other.coefficient, current_other.exponent)
+            current_other = current_other.next
+
+        return result
+
+    def multiply(self, other):
+        result = Polynomial()
+        current_self = self.head
+        while current_self:
+            current_other = other.head
+            while current_other:
+                coeff = current_self.coefficient * current_other.coefficient
+                exp = current_self.exponent + current_other.exponent
+                result.insert(coeff, exp)
+                current_other = current_other.next
+            current_self = current_self.next
+        return result
+
+# Menu
+def menu():
+    print("1. Insert Polynomial")
+    print("2. Display Polynomial")
+    print("3. Add Polynomials")
+    print("4. Multiply Polynomials")
+    print("5. Exit")
+    choice = int(input("Enter your choice: "))
+    return choice
+
+poly1 = Polynomial()
+poly2 = Polynomial()
+
+while True:
+    choice = menu()
+
+    if choice == 1:
+        coeff = int(input("Enter coefficient: "))
+        exp = int(input("Enter exponent: "))
+        poly_choice = int(input("Enter 1 for first polynomial, 2 for second polynomial: "))
+        if poly_choice == 1:
+            poly1.insert(coeff, exp)
+        elif poly_choice == 2:
+            poly2.insert(coeff, exp)
+        else:
+            print("Invalid choice")
+
+    elif choice == 2:
+        print("Polynomial 1:")
+        poly1.display()
+        print("Polynomial 2:")
+        poly2.display()
+
+    elif choice == 3:
+        print("Result of addition:")
+        result = poly1.add(poly2)
+        result.display()
+
+    elif choice == 4:
+        print("Result of multiplication:")
+        result = poly1.multiply(poly2)
+        result.display()
+
+    elif choice == 5:
+        print("Exiting...")
+        break
+
+    else:
+        print("Invalid choice. Please enter a valid option.")
